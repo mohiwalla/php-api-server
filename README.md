@@ -1,34 +1,33 @@
-# php-template
+# php-api-server
 
-A simple PHP template with basic routing functionality and directory structure to get started on a new project quickly. It has zero third-party dependencies except in the development environment. This project is meant to be used with PHP 8 and above.
+A simple API server made for PHP 8 or above.
 
-It uses Tailwind CSS for styling and a sleek DB class for database interaction so that you don't have to use low-level functions (only MySQL and MSSQL for now).
+## Get started
 
-## Prerequisites
+1. Run `composer install` to install dependencies (has `phpmailer` though), and pouplate `.env`.
+2. Create a file (eg. `file-name.php`) in `/src/api` folder, write some code, like this:
 
-1. [Node.js](https://nodejs.org/)
-2. [PHP 8 or above](https://www.php.net/)
+```PHP
+<?php
 
-## Setup
+return new Response(true, "Working");
 
-```bash
-npx @mohiwalla/php .
 ```
 
-Visit [http://localhost:8000](http://localhost:8000).
+3. Start docker `docker compose up -d` and PHP `php -S localhost:6969`, and use endpoint like this `localhost:6969/api/file-name`.
 
-## Scripts
+## Features
 
-The following npm scripts are available:
-
-- `build`: Compiles the Tailwind CSS from `input.css` to `style.css`.
-- `start`: Builds the CSS and starts the development server.
-- `dev`: Starts the PHP built-in server on `localhost:8000`.
-- `css`: Watches for changes in `input.css` and rebuilds `style.css`.
+- `Response` class, return JSON formatted response
+- `DB` class, prepared queries & elegant functions
+- Native `.env` support
+- `zod` class, for schema validation
+- JS like `fetch` function (yea.. no stupid cURL)
+- Some useful utils, like `GetIP`, `RandomNumber`, `RandomString` (like nanoid), `UploadFile`, `SendMail` etc.
 
 ## License
 
-This project is licensed under the ISC License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Author
 

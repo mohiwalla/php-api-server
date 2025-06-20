@@ -1,6 +1,6 @@
 <?php
 
-function uploadFile($fileName, $file, $uploadDirectory) {
+function UploadFile($fileName, $file, $uploadDirectory) {
     $baseName = $fileName . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
     $filePath = $uploadDirectory . $baseName;
 

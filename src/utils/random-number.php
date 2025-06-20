@@ -1,7 +1,6 @@
 <?php
 
-function getRandomNumber(int $length = 6): string
-{
+function RandomNumber(int $length = 6): string {
     if ($length <= 0) {
         throw new InvalidArgumentException("Length must be a positive integer.");
     }

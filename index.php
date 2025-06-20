@@ -1,6 +1,6 @@
 <?php
 
-$rawRoute = rtrim($_SERVER['PATH_INFO'], "/");
+$rawRoute = rtrim($_SERVER['PATH_INFO'] ?? "", "/");
 $route = $rawRoute ?: "/";
 
 require __DIR__ . "/src/shared/fetch.php";
