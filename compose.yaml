@@ -1,0 +1,22 @@
+services:
+    mysql:
+        image: mysql:latest
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: api
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: admin
+        ports:
+            - "3306:3306"
+        volumes:
+            - db:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
+            retries: 5
+            start_period: 10s
+            timeout: 5s
+
+volumes:
+    db:

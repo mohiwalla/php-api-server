@@ -1,0 +1,17 @@
+{
+	"tailwindCSS.includeLanguages": {
+		"html": "html",
+		"javascript": "javascript",
+		"css": "css"
+	},
+	"editor.quickSuggestions": {
+		"strings": true
+	},
+	"emmet.includeLanguages": {
+		"php": "html"
+	},
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
+	},
+	"php.version": "8.4"
+}
