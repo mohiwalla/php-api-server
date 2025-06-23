@@ -97,7 +97,7 @@ class DB
      *
      * @return array|null An object representing the row in the result set, or null if there are no more rows.
      */
-    public function fetch($result, callable $callback = null)
+    public function fetch($result, ?callable $callback = null)
     {
         $row = $result->fetch_object();
 
@@ -121,7 +121,7 @@ class DB
      * @return array An array of objects representing the rows in the result set. If the result set is empty
      *               or if the query failed, an empty array is returned.
      */
-    public function fetchAll($result, callable $callback = null)
+    public function fetchAll($result, ?callable $callback = null)
     {
         $data = [];
 

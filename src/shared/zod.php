@@ -20,7 +20,7 @@ class zod
      * @param string $name The name of the property.
      * @param mixed $value The value of the property.
      */
-    function __set(string $name, mixed $value)
+    public function __set(string $name, mixed $value)
     {
         $this->$name = $value;
     }
@@ -34,10 +34,10 @@ class zod
      * @param string|null $requiredMessage Message to return if field is required but not present.
      * @return $this
      */
-    function field(string $name, ?callable $validator = null, string | null $invalidMessage = null, string | null $requiredMessage = null)
+    public function field(string $name, ?callable $validator = null, string|null $invalidMessage = null, string|null $requiredMessage = null)
     {
         if (!$validator) {
-            $validator = function() {
+            $validator = function () {
                 $result = new stdClass();
                 $result->ok = true;
 
@@ -45,7 +45,7 @@ class zod
             };
         }
 
-        $this->schema[$name] = [$validator, $invalidMessage, $requiredMessage];
+        $this->schema[] = [$name, $validator, $invalidMessage, $requiredMessage];
         return $this;
     }
 
@@ -55,19 +55,19 @@ class zod
      * @param array $data The input data to validate.
      * @return stdClass Result object indicating success or failure.
      */
-    function parse(array $data)
+    public function parse(array $data)
     {
         $result = new stdClass();
         $result->ok = true;
         $result->error = null;
         $result->data = new stdClass();
 
-        foreach ($this->schema as $key => $config) {
-            list($validator, $invalidMessage, $requiredMessage) = $config;
+        foreach ($this->schema as $config) {
+            [$key, $validator, $invalidMessage, $requiredMessage] = $config;
 
             $value = $data[$key] ?? null;
 
-            if (is_null($value)) {
+            if ($value === null) {
                 $result->ok = false;
                 $result->error = $requiredMessage ?? $invalidMessage ?? "Please enter a valid $key to proceed further.";
                 break;
@@ -77,7 +77,7 @@ class zod
 
             if (!$response->ok) {
                 $result->ok = false;
-                $result->error = $invalidMessage ?? $response->text ?? "Please enter a valid $key to proceed further.";
+                $result->error = $invalidMessage ?? "⚠️ Error, $key {$response->text}" ?? "Please enter a valid $key to proceed further.";
                 break;
             }
 
@@ -92,12 +92,12 @@ class zod
      *
      * @return callable
      */
-    function string()
+    public function string()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = is_string($value);
-            $result->text = $result->ok ? '' : 'Must be a string.';
+            $result->text = $result->ok ? '' : 'must be a string.';
 
             return $result;
         };
@@ -108,12 +108,12 @@ class zod
      *
      * @return callable
      */
-    function number()
+    public function number()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = is_numeric($value);
-            $result->text = $result->ok ? '' : 'Must be a number.';
+            $result->text = $result->ok ? '' : 'must be a number.';
 
             return $result;
         };
@@ -125,7 +125,7 @@ class zod
      * @param callable|null $function Optional validator function for each element in the array.
      * @return callable
      */
-    function array(?callable $function = null)
+    public function array(?callable $function = null)
     {
         return function ($value) use ($function) {
             $result = new stdClass();
@@ -155,12 +155,12 @@ class zod
      *
      * @return callable
      */
-    function email()
+    public function email()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
-            $result->text = $result->ok ? '' : 'Invalid email address.';
+            $result->text = $result->ok ? '' : 'invalid email address.';
 
             return $result;
         };
@@ -171,12 +171,12 @@ class zod
      *
      * @return callable
      */
-    function url()
+    public function url()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = filter_var($value, FILTER_VALIDATE_URL) !== false;
-            $result->text = $result->ok ? '' : 'Invalid URL.';
+            $result->text = $result->ok ? '' : 'invalid URL.';
 
             return $result;
         };
@@ -188,12 +188,12 @@ class zod
      * @param string $regex The regular expression to match against.
      * @return callable
      */
-    function regex(string $regex)
+    public function regex(string $regex)
     {
         return function ($value) use ($regex) {
             $result = new stdClass();
             $result->ok = preg_match($regex, $value);
-            $result->text = $result->ok ? '' : 'Invalid format.';
+            $result->text = $result->ok ? '' : 'invalid format.';
 
             return $result;
         };
@@ -204,12 +204,12 @@ class zod
      *
      * @return callable
      */
-    function base64()
+    public function base64()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = base64_decode($value, true) !== false;
-            $result->text = $result->ok ? '' : 'Invalid base64 string.';
+            $result->text = $result->ok ? '' : 'invalid base64 string.';
 
             return $result;
         };
@@ -220,12 +220,12 @@ class zod
      *
      * @return callable
      */
-    function json()
+    public function json()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = json_decode($value) !== null;
-            $result->text = $result->ok ? '' : 'Invalid JSON string.';
+            $result->text = $result->ok ? '' : 'invalid JSON string.';
 
             return $result;
         };
@@ -236,12 +236,12 @@ class zod
      *
      * @return callable
      */
-    function ip()
+    public function ip()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = filter_var($value, FILTER_VALIDATE_IP) !== false;
-            $result->text = $result->ok ? '' : 'Invalid IP address.';
+            $result->text = $result->ok ? '' : 'invalid IP address.';
 
             return $result;
         };
@@ -252,12 +252,12 @@ class zod
      *
      * @return callable
      */
-    function uuid()
+    public function uuid()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i', $value);
-            $result->text = $result->ok ? '' : 'Invalid UUID.';
+            $result->text = $result->ok ? '' : 'invalid UUID.';
 
             return $result;
         };
@@ -268,12 +268,12 @@ class zod
      *
      * @return callable
      */
-    function date()
+    public function date()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = strtotime($value) !== false;
-            $result->text = $result->ok ? '' : 'Invalid date.';
+            $result->text = $result->ok ? '' : 'invalid date.';
 
             return $result;
         };
@@ -284,12 +284,12 @@ class zod
      *
      * @return callable
      */
-    function datetime()
+    public function datetime()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = strtotime($value) !== false;
-            $result->text = $result->ok ? '' : 'Invalid datetime.';
+            $result->text = $result->ok ? '' : 'invalid datetime.';
 
             return $result;
         };
@@ -300,12 +300,12 @@ class zod
      *
      * @return callable
      */
-    function time()
+    public function time()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = strtotime($value) !== false;
-            $result->text = $result->ok ? '' : 'Invalid time.';
+            $result->text = $result->ok ? '' : 'invalid time.';
 
             return $result;
         };
@@ -316,12 +316,12 @@ class zod
      *
      * @return callable
      */
-    function boolean()
+    public function boolean()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = is_bool($value);
-            $result->text = $result->ok ? '' : 'Must be a boolean.';
+            $result->text = $result->ok ? '' : 'must be a boolean.';
 
             return $result;
         };
@@ -333,12 +333,12 @@ class zod
      * @param string $includes The substring that should be included.
      * @return callable
      */
-    function includes(string $includes)
+    public function includes(string $includes)
     {
         return function ($value) use ($includes) {
             $result = new stdClass();
             $result->ok = strpos($value, $includes) !== false;
-            $result->text = $result->ok ? '' : 'Must include "' . $includes . '".';
+            $result->text = $result->ok ? '' : 'must include "' . $includes . '".';
 
             return $result;
         };
@@ -350,12 +350,12 @@ class zod
      * @param string $startsWith The substring that should be at the start.
      * @return callable
      */
-    function startsWith(string $startsWith)
+    public function startsWith(string $startsWith)
     {
         return function ($value) use ($startsWith) {
             $result = new stdClass();
             $result->ok = strpos($value, $startsWith) === 0;
-            $result->text = $result->ok ? '' : 'Must start with "' . $startsWith . '".';
+            $result->text = $result->ok ? '' : 'must start with "' . $startsWith . '".';
 
             return $result;
         };
@@ -367,12 +367,12 @@ class zod
      * @param string $endsWith The substring that should be at the end.
      * @return callable
      */
-    function endsWith(string $endsWith)
+    public function endsWith(string $endsWith)
     {
         return function ($value) use ($endsWith) {
             $result = new stdClass();
             $result->ok = substr($value, -strlen($endsWith)) === $endsWith;
-            $result->text = $result->ok ? '' : 'Must end with "' . $endsWith . '".';
+            $result->text = $result->ok ? '' : 'must end with "' . $endsWith . '".';
 
             return $result;
         };
@@ -384,12 +384,12 @@ class zod
      * @param int $minlength The minimum length.
      * @return callable
      */
-    function minlength(int $minlength)
+    public function minlength(int $minlength)
     {
         return function ($value) use ($minlength) {
             $result = new stdClass();
             $result->ok = strlen($value) >= $minlength;
-            $result->text = $result->ok ? '' : 'Must be at least ' . $minlength . ' characters long.';
+            $result->text = $result->ok ? '' : 'must be at least ' . $minlength . ' characters long.';
 
             return $result;
         };
@@ -401,12 +401,12 @@ class zod
      * @param int $maxlength The maximum length.
      * @return callable
      */
-    function maxlength(int $maxlength)
+    public function maxlength(int $maxlength)
     {
         return function ($value) use ($maxlength) {
             $result = new stdClass();
             $result->ok = strlen($value) <= $maxlength;
-            $result->text = $result->ok ? '' : 'Must be at most ' . $maxlength . ' characters long.';
+            $result->text = $result->ok ? '' : 'must be at most ' . $maxlength . ' characters long.';
 
             return $result;
         };
@@ -418,7 +418,7 @@ class zod
      * @param int $min The minimum value.
      * @return callable
      */
-    function min(int $min)
+    public function min(int $min)
     {
         return function ($value) use ($min) {
             $result = new stdClass();
@@ -435,7 +435,7 @@ class zod
      * @param int $max The maximum value.
      * @return callable
      */
-    function max(int $max)
+    public function max(int $max)
     {
         return function ($value) use ($max) {
             $result = new stdClass();
@@ -446,22 +446,23 @@ class zod
         };
     }
 
-    function enum(...$values) {
+    public function enum(...$values)
+    {
         return function ($value) use ($values) {
             $result = new stdClass();
             $result->ok = in_array($value, $values);
-            $result->text = "Please choose either " . implode(', ', $values) .'.';
+            $result->text = "Please choose either " . implode(', ', $values) . '.';
 
             return $result;
         };
     }
 
-    function phone()
+    public function phone()
     {
         return function ($value) {
             $result = new stdClass();
             $result->ok = preg_match('/^\+?[0-9\s\-()]{7,15}$/', $value);
-            $result->text = $result->ok ? '' : 'Invalid phone number. Must contain 7-15 digits, optionally with spaces, dashes, or parentheses.';
+            $result->text = $result->ok ? '' : 'invalid phone number. Must contain 7-15 digits, optionally with spaces, dashes, or parentheses.';
             return $result;
         };
     }
@@ -474,7 +475,7 @@ class zod
      * @param array $mimeTypes The allowed MIME types.
      * @return callable
      */
-    function file(int $minSize = MIN_FILE_SIZE, int $maxSize = MAX_FILE_SIZE, array $mimeTypes = MIME_TYPES)
+    public function file(int $minSize = MIN_FILE_SIZE, int $maxSize = MAX_FILE_SIZE, array $mimeTypes = MIME_TYPES)
     {
         return function ($value) use ($minSize, $maxSize, $mimeTypes) {
             $result = new stdClass();
