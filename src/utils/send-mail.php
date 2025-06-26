@@ -15,7 +15,12 @@ function SendMail($email, $subject, $body) {
         $mail->Port = $_ENV["SMTP_PORT"];
 
         $mail->SMTPAuth = true;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+
+        $mail->SMTPSecure = match($mail->Port) {
+            465 => PHPMailer::ENCRYPTION_SMTPS,
+            587 => PHPMailer::ENCRYPTION_STARTTLS,
+            default => false,
+        };
 
         $mail->Username = $_ENV["SMTP_USER"];
         $mail->Password = $_ENV["SMTP_PASSWORD"];

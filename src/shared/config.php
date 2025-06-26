@@ -5,6 +5,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+# for development server checks
 define("DEV", $_SERVER["SERVER_NAME"] === "localhost");
 
 # error reporting enabled for development

@@ -1,20 +1,20 @@
 # php-api-server
 
-A simple API server made for PHP 8 or above.
+A simple API server made to be used with `React` frontend, compatible only with PHP v8 or above.
 
 ## Get started
 
-1. Run `composer install` to install dependencies (has `phpmailer` though), and pouplate `.env`.
-2. Create a file (eg. `file-name.php`) in `/src/api` folder, write some code, like this:
+1. Run `composer install` to install dependencies (only `phpmailer`), and pouplate `.env`.
+2. Create a file (eg. `duck.php`) in `/src/api` folder, write some code, like this:
 
 ```PHP
 <?php
 
-return new Response(true, "Working");
+return new Response(true, "🦆🦆🦆");
 
 ```
 
-3. Start docker `docker compose up -d` and PHP `php -S localhost:6969`, and use endpoint like this `localhost:6969/api/file-name`.
+3. Start docker `docker compose up -d` and PHP `php -S localhost:6969`, and use endpoint like this `localhost:6969/duck`.
 
 ## Features
 
@@ -22,8 +22,12 @@ return new Response(true, "Working");
 - `DB` class, prepared queries & elegant functions
 - Native `.env` support
 - `zod` class, for schema validation
-- JS like `fetch` function (yea.. no stupid cURL)
+- JS like `fetch` function (yea.. no stupid cURL 🤮)
 - Some useful utils, like `GetIP`, `RandomNumber`, `RandomString` (like nanoid), `UploadFile`, `SendMail` etc.
+
+### Demos `New`
+
+View demos in `/src/api/demo` directory.
 
 ## License
 
